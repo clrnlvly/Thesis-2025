@@ -1,4 +1,4 @@
-# Enrollment Management System (EMS) with Trend Analysis by Department using XGBoost
+# Enrollment Management System (EMS) with Trend Analysis by Department using XGBoost Algorithm
 
 ## ABSTRACT
 This thesis presents the development and implementation of an **Enrollment Management System (EMS)** with **Trend Analysis by Department**, utilizing the **XGBoost** algorithm, for **Westbridge Institute of Technology, Inc. (WITI)**. The study aims to enhance existing enrollment procedures by addressing areas where manual processes may benefit from improved efficiency, accuracy, and data-driven support. 
