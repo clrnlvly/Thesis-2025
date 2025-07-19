@@ -13,8 +13,8 @@ System performance was assessed using **ISO/IEC 25010** software quality standar
 
 ## Features
 - Student registration and enrollment management
-- Payment verification and tracking
-- Grade viewing and report generation
+- Payment records and tracking
+- Grade viewing
 - Enrollment evaluation and approval
 - Predictive analytics using XGBoost (trend analysis by department)
 - ISO/IEC 25010-compliant software quality assessment
