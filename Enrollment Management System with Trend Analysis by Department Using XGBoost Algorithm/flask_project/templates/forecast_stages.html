@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Forecast - XGBoost</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/forecast.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <section class="forecast__content">
+        <div class="forecast__stage" id="stage1">
+            <div class="paper-container">
+                <div class="paper-header"> 🤖 XGBoost Data Readiness: Raw Data Loading & Preparation</div>
+                <div class="checklist-grid-4col">
+                    <div class="checklist-col" id="data-basics">
+                        <div class="category-header">
+                            <span class="icon">✅</span> Data Basics
+                        </div>
+                        <ul>
+                            <li title="Ensure multiple data sources are integrated if applicable">
+                                <input type="checkbox" class="checkbox"> Multiple sources integrated
+                            </li>
+                            <li title="Verify data coverage spans sufficient time frames or events">
+                                <input type="checkbox" class="checkbox"> Adequate time/event coverage
+                            </li>
+                            <li title="Confirm no critical fields contain null or missing values">
+                                <input type="checkbox" class="checkbox"> No critical fields missing
+                            </li>
+                        </ul>
+                    </div>
+            
+                    <div class="checklist-col" id="data-structure">
+                        <div class="category-header">
+                            <span class="icon">🔍</span> Data Structure
+                        </div>
+                        <ul>
+                            <li title="Verify columns are consistent and well-defined across datasets">
+                                <input type="checkbox" class="checkbox"> Consistent columns
+                            </li>
+                            <li title="Ensure that categorical variables are appropriately encoded or categorized">
+                                <input type="checkbox" class="checkbox"> Categorical variables encoded
+                            </li>
+                            <li title="Check if all expected features/variables are present in the dataset">
+                                <input type="checkbox" class="checkbox"> All expected features
+                            </li>
+                        </ul>
+                    </div>
+            
+                    <div class="checklist-col" id="data-quality">
+                        <div class="category-header">
+                            <span class="icon">⚠️</span> Data Quality
+                        </div>
+                        <ul>
+                            <li title="Assess the dataset for missing or incomplete data entries">
+                                <input type="checkbox" class="checkbox"> Minimal missing data
+                            </li>
+                            <li title="Ensure no duplicate entries exist, especially for key identifiers">
+                                <input type="checkbox" class="checkbox"> No duplicate records
+                            </li>
+                            <li title="Evaluate if any noise or errors could impact the model's performance">
+                                <input type="checkbox" class="checkbox"> Data noise minimized
+                            </li>
+                        </ul>
+                    </div>
+            
+                    <div class="checklist-col" id="model-readiness">
+                        <div class="category-header">
+                            <span class="icon">⚙️</span> Model Readiness
+                        </div>
+                        <ul>
+                            <li title="Verify if features need normalization or scaling before model input">
+                                <input type="checkbox" class="checkbox"> Feature scaling/normalization checked
+                            </li>
+                            <li title="Ensure that time-based or sequential data is properly ordered">
+                                <input type="checkbox" class="checkbox"> Time/sequence order verified
+                            </li>
+                            <li title="Assess if the data includes relevant target variables for the task">
+                                <input type="checkbox" class="checkbox"> Relevant target variable present
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="year-range-container">
+                    <div class="year-range">
+                        <div class="start">
+                            <label for="startYear">From:</label>
+                            <input type="text" id="startYear" class="form-control yearpicker" placeholder="Select Year" readonly>
+                        </div>
+                        <div class="end">
+                            <label for="endYear">To:</label>
+                            <input type="text" id="endYear" class="form-control yearpicker" placeholder="Select Year" readonly>
+                        </div>
+                    </div>
+                                    
+                    <div class="buttons-container">
+                        <button class="load__btn" onclick="loadData_1()">Load</button>
+                        <button class="clean__btn" onclick="cleanData_1()">Clean</button>
+                    </div>
+                </div>
+
+            <table id="loadDataTable" class="loadDataTable">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>branch</th>
+                        <th>student_id</th>
+                        <th>school_year</th>
+                        <th>semester</th>
+                        <th>department</th>
+                        <th>program</th>
+                        <th>year_level</th>
+                        <th>classified_as</th>
+                        <th>status</th>
+                        <th>last_school_attended</th>
+                        <th>gender</th>
+                        <th>birth_date</th>
+                        <th>civil_status</th>
+                        <th>address</th>
+                        <th>birth_place</th>
+                    </tr>
+                </thead>
+                <tbody id="loadData_TableBody">
+                    <!-- Initial State Message -->
+                    <tr>
+                      <td colspan="16" class="text-center text-muted py-4">
+                        No data loaded yet. Please select a dataset.
+                      </td>
+                    </tr>
+                    </tbody>
+            </table>
+
+            <div class="pagination" id="loadData_Pagination">
+                <button id="loadData_Prev" onclick="handlePagination('load', 'prev')">
+                    <i class="uil uil-arrow-circle-left"></i> Prev
+                </button>
+                <span id="loadData_PageNum">Page 1 of 1</span>
+                <button id="loadData_Next" onclick="handlePagination('load', 'next')">
+                    Next <i class="uil uil-arrow-circle-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmResetModal" tabindex="-1" aria-labelledby="confirmResetModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title" id="confirmResetModalLabel">⚠️ Confirm Data Reset</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>This will clear all existing data in:</p>
+                        <ul>
+                            <li>Loaded datasets</li>
+                            <li>Preprocessed data</li>
+                            <li>Training data</li>
+                        </ul>
+                        <p>Are you sure you want to proceed?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmResetBtn">Reset & Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dataModalLabel">Choose Dataset Type</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please select the type of dataset you want to load:</p>
+                        <!-- <button class="btn btn-success m-2" id="publicDatasetBtn">Public Dataset</button> -->
+                        <button class="btn btn-warning m-2" id="schoolDatasetBtn">Public Dataset</button>
+                        
+                        <div class="mt-3">
+                            <div class="progress" id="progressBar" style="height: 25px;">
+                                <div class="progress-bar" id="progressBarInner" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                <span id="progressText">0%</span>
+                            </div>
+                            <p id="rowsAddedText" class="mt-2 text-info"></p>
+                        </div>
+
+                        <p id="datasetMessage" class="mt-3 text-primary"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="cleanModal" tabindex="-1" aria-labelledby="cleanModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cleanModalLabel">🚀 Data Cleaning Progress</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="cleaning-steps">
+                                    <div class="step">
+                                        <i class="fas fa-sync fa-spin"></i>
+                                        <span class="step-text">Standardizing school names...</span>
+                                    </div>
+                                    <div class="step">
+                                        <i class="fas fa-sync fa-spin"></i>
+                                        <span class="step-text">Filling empty values...</span>
+                                    </div>
+                                    <div class="step">
+                                        <i class="fas fa-sync fa-spin"></i>
+                                        <span class="step-text">Formatting uppercase...</span>
+                                    </div>
+                                </div>
+                                <div class="progress mt-3" style="height: 25px;">
+                                    <div class="progress-bar bg-success" id="cleanProgress" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <div id="cleanResults" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+        </div>
+       
+        <div class="forecast__stage" id="stage2">
+            <div class="paper-container">
+                <div class="paper-header">🤖 Ready - Train Data</div>
+                <div class="learning-rate-btn-container">
+                    <div class="buttons-container">
+                        <button class="readyTrainData__btn" aria-label="Mark data as ready for training" onclick="readyTrainData()">Train-Ready</button>
+                    </div>
+                </div>
+                <div id="trainingAlertBox" class="alert-box" style="display:none;">
+                    <p id="trainingAlertMsg">Loading...</p>
+                </div>
+                <div class="table-section">
+                    <label for="filterInput">🔍 Search all columns:</label>
+                    <input type="text" id="filterInput" onkeyup="filterTable()" placeholder="Type to filter..." aria-label="Search through training data">
+        
+                    <table id="trainDataTable" class="trainDataTable" aria-describedby="tableDescription">
+                        <thead>
+                            <tr></tr>
+                        </thead>
+                        <tbody id="trainData_TableBody">
+                        </tbody>
+                    </table>
+        
+                    <div class="pagination train-pagination" id="trainData_Pagination">
+                        <button id="trainData_Prev" onclick="handlePagination('train', 'prev')">
+                            <i class="uil uil-arrow-circle-left"></i> Prev
+                        </button>
+                        <span id="trainData_PageNum">Page 1 of 1</span>
+                        <button id="trainData_Next" onclick="handlePagination('train', 'next')">
+                            Next <i class="uil uil-arrow-circle-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="preprocessModal" tabindex="-1" aria-labelledby="preprocessModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="preprocessModalLabel">⚙️ Data Preprocessing</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="preprocess-steps">
+                                <div class="step">
+                                    <i class="fas fa-sync fa-spin"></i>
+                                    <span class="step-text">Creating feature table...</span>
+                                </div>
+                                <div class="step">
+                                    <i class="fas fa-sync"></i>
+                                    <span class="step-text">Calculating ages...</span>
+                                </div>
+                                <div class="step">
+                                    <i class="fas fa-sync"></i>
+                                    <span class="step-text">Encoding categories...</span>
+                                </div>
+                            </div>
+                            <div class="progress mt-3" style="height: 25px;">
+                                <div class="progress-bar bg-info" id="preprocessProgress" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div id="preprocessResults" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<div class="forecast__stage" id="stage3">
+    <div class="paper-container">
+        <div class="paper-header">
+            <div class="paper-header">🤖 XGBoost Model Training</div>
+            <div class="model-status">
+                <span id="modelStatus" class="badge bg-secondary">Not Trained</span>
+                <div id="trainingSpinner" class="spinner-border spinner-border-sm text-primary ms-2" role="status" style="display:none;">
+                    <span class="visually-hidden">Training...</span>
+                </div>                
+                <span id="trainingTime" class="text-muted ms-2"></span>
+            </div>
+        </div>
+        <div class="validation-checklist mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Model Validation Criteria
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" data-validation="data-split">
+                        <i class="fas fa-check-circle validation-icon"></i>
+                        Train/Validation Consistency
+                        <span class="badge bg-success float-end">Passed</span>
+                    </li>
+                    <li class="list-group-item" data-validation="hyperparameters">
+                        <i class="fas fa-check-circle validation-icon"></i>
+                        Safe Hyperparameters
+                        <span class="badge bg-success float-end">Passed</span>
+                    </li>
+                    <li class="list-group-item" data-validation="metrics">
+                        <i class="fas fa-check-circle validation-icon"></i>
+                        Performance Thresholds
+                        <span class="badge bg-success float-end">Passed</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="controls-section row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Learning Rate</label>
+                <select id="learningRateSelect" class="form-select">
+                    <option value="0.01">0.01</option>
+                    <option value="0.05">0.05</option>
+                    <option value="0.1" selected>0.1</option>
+                    <option value="0.2">0.2</option>
+                </select>
+            </div>
+            
+            <div class="col-md-4">
+                <label class="form-label">Max Depth</label>
+                <select id="maxDepthSelect" class="form-select">
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            
+            <div class="col-md-4 d-flex align-items-end">
+                <button id="trainModelBtn" class="btn btn-primary w-100">
+                    <i class="fas fa-play"></i> Train Model
+                </button>
+            </div>
+        </div>
+        <div class="visualization-grid row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <i class="fas fa-chart-bar"></i> Performance Comparison
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-sliders-h"></i> Threshold Analysis
+                    </div>
+                    <div class="card-body">
+                        <canvas id="thresholdChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-weight-hanging"></i> Feature Importance
+                        <div class="form-check form-switch float-end">
+                            <input class="form-check-input" type="checkbox" 
+                                   id="featureHistoryToggle" checked>
+                            <label class="form-check-label text-white" 
+                                   for="featureHistoryToggle">
+                                Show History
+                            </label>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="featureImportanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="results-section mt-4">
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">
+                            <i class="fas fa-table"></i> Predictions
+                            <div class="float-end">
+                                <span class="badge bg-light text-dark">
+                                    Page <span id="currentPage">1</span> of 
+                                    <span id="totalPages">1</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Enrollment Probability</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="predictionsBody">
+                                        <!-- Predictions will load here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pagination-controls mt-3">
+                                <button id="prevPageBtn" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button id="nextPageBtn" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-secondary text-white">
+                            <i class="fas fa-history"></i> Training History
+                            <button id="clearHistoryBtn" 
+                                    class="btn btn-sm btn-outline-light float-end">
+                                Clear
+                            </button>
+                        </div>
+                        <ul id="trainingHistory" class="list-group list-group-flush">
+                            <!-- History items will load here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div class="forecast__stage" id="stage4">
+            <div class="paper-container">
+                <div class="paper-header">📊 Aggregate Predictions: Department-Level Trends</div>
+                <div class="checklist-grid-3col">
+                    <div class="checklist-col" id="aggregation-settings">
+                        <div class="category-header">
+                            <span class="icon">⚙️</span> Aggregation Setup
+                        </div>
+                        <ul>
+                            <li title="Ensure complete historical data for all departments">
+                                <input type="checkbox" class="checkbox"> Complete historical data
+                            </li>
+                            <li title="Verify consistent semester formatting across years">
+                                <input type="checkbox" class="checkbox"> Consistent semester format
+                            </li>
+                            <li title="Confirm department names are standardized">
+                                <input type="checkbox" class="checkbox"> Standardized departments
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="checklist-col" id="time-parameters">
+                        <div class="category-header">
+                            <span class="icon">📅</span> Time Parameters
+                        </div>
+                        <div class="time-controls">
+                            <label>Semester Range:
+                                <select id="semesterRange" class="form-control">
+                                    <option value="3">Last 3 Semesters</option>
+                                    <option value="6">Last 6 Semesters</option>
+                                    <option value="12">Last 12 Semesters</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checklist-col" id="aggregation-actions">
+                        <div class="category-header">
+                            <span class="icon">📈</span> Actions
+                        </div>
+                        <div class="buttons-container">
+                            <button class="aggregate__btn" onclick="runAggregation()">Generate Trends</button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="paper-header mt-4">📈 Stage 4 Preview: Aggregated Trends</div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>School Year</th>
+                            <th>Predicted Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendPreviewBody">
+                        <!-- Data will load here -->
+                    </tbody>
+                </table>
+
+                <div class="chart-container">
+                    <canvas id="trendChart" aria-label="Department Enrollment Trends"></canvas>
+                </div>
+ 
+                <div class="modal fade" id="aggregationModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">🔍 Aggregating Predictions</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="aggregation-steps">
+                                    <div class="step">
+                                        <i class="fas fa-sync fa-spin"></i>
+                                        <span class="step-text">Grouping by department...</span>
+                                    </div>
+                                    <div class="step">
+                                        <i class="fas fa-sync"></i>
+                                        <span class="step-text">Calculating enrollment rates...</span>
+                                    </div>
+                                </div>
+                                <div class="progress mt-3">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="forecast__stage" id="stage6">
+            <div class="paper-container">
+                <div class="paper-header">📈 Insights & Visualization: Combined Perspectives</div>
+                <div class="viz-tabs">
+                    <button class="viz-tab active" onclick="openVizTab(event, 'individual')">Individual Insights</button>
+                    <button class="viz-tab" onclick="openVizTab(event, 'trends')">Trend Insights</button>
+                    <button class="viz-tab" onclick="openVizTab(event, 'accuracy')">Model Accuracy</button>
+                </div>
+
+                <div id="individual" class="viz-content active">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">🚨 At-Risk Students</div>
+                                <div class="card-body">
+                                    <canvas id="riskChart"></canvas>
+                                    <table class="risk-table">
+                                        <!-- High-risk student list will load here -->
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">📋 Intervention Suggestions</div>
+                                <div class="card-body">
+                                    <ul class="intervention-list">
+                                        <li>📧 Email campaign for students <65% likelihood</li>
+                                        <li>🎓 Scholarship opportunities</li>
+                                        <li>📅 Academic counseling sessions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="trends" class="viz-content">
+                    <div class="card">
+                        <div class="card-header">📈 Department Trends</div>
+                        <div class="card-body">
+                            <div class="trend-filter">
+                                <label>Select Department:
+                                    <select id="deptSelect" class="form-control"></select>
+                                </label>
+                            </div>
+                            <canvas id="deptTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            
+                <div id="accuracy" class="viz-content">
+                    <div class="card">
+                        <div class="card-header">🎯 Prediction Accuracy</div>
+                        <div class="card-body">
+                            <div class="accuracy-metrics">
+                                <div class="metric">Historical Accuracy: <span id="histAccuracy">92%</span></div>
+                                <div class="metric">Forecast Error: <span id="forecastError">±3.2%</span></div>
+                            </div>
+                            <canvas id="accuracyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="export-controls">
+                    <button class="export-btn" onclick="exportPDF()">📄 Export PDF</button>
+                    <button class="export-btn" onclick="exportCSV()">📊 Export Data</button>
+                </div>
+            </div>
+        </div>
+        
+    </section>
+
+    <div class="modal fade" id="globalMessageModal" tabindex="-1" aria-labelledby="globalMessageModalLabel"     aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="globalMessageModalLabel">System Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="globalMessageContent">
+                    <!-- Message content will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+$(document).ajaxComplete(function(event, xhr, settings) {
+    try {
+        const response = xhr.responseJSON;
+        if (!response) return;
+        const existingModalResponses = [
+            '/api/clean-data',
+            '/api/build-preprocessed-data',
+            '/api/build-final-preprocessed-data',
+            '/api/train-model',
+            '/api/process-school-dataset'
+        ];
+
+        if (existingModalResponses.some(url => settings.url.includes(url))) return;
+        if (response.message || response.error) {
+            const title = response.error ? '⚠️ Error' : 'ℹ️ Information';
+            const content = response.error || response.message;
+            
+            $('#globalMessageModalLabel').text(title);
+            $('#globalMessageContent').html(content);
+            $('#globalMessageModal').modal('show');
+        }
+    } catch (e) {
+        console.error('Error handling global message:', e);
+    }
+});
+function showGlobalMessage(message, isError = false) {
+    $('#globalMessageModalLabel').text(isError ? '⚠️ Error' : 'ℹ️ Information');
+    $('#globalMessageContent').text(message);
+    $('#globalMessageModal').modal('show');
+}
+
+
+//======================================= STAGE 1: LOAD & CLEAN DATA STAGE =======================================//
+
+
+function updateChecklistStatus() {
+const hasSchoolIssues = dirtyRecords.some(r => 
+    ['unknown', ''].includes(r.last_school_attended?.toLowerCase())
+);
+
+$('#data-quality li:eq(2) input')
+    .prop('checked', !hasSchoolIssues)
+    .closest('li')
+    .css('color', hasSchoolIssues ? '#dc3545' : '#28a745');
+
+const startYear = $("#startYear").val();
+const endYear = $("#endYear").val();
+const start = parseInt(startYear);
+const end = parseInt(endYear);
+const hasYears = startYear && endYear;
+const validYearSpan = hasYears ? (end - start + 1) === 5 : false;
+const hasData = localStorage.getItem('dirtyRecordsState') !== null;
+const isClean = hasData && dirtyRecords.length === 0;
+const isInitialState = $('#loadData_TableBody').text().includes('No dataset selected yet');
+const allValid = validYearSpan && isClean && !isInitialState;
+
+$('.checklist-col input[type="checkbox"]').each(function() {
+    const $li = $(this).closest('li');
+    $(this).prop('checked', allValid);
+    $li.css('color', allValid ? '#28a745' : '#dc3545');
+});
+
+if (isInitialState) {
+    $('.checklist-col input[type="checkbox"]').prop('checked', false)
+        .closest('li').css('color', '#dc3545');
+}
+}
+
+$(document).ready(function () {
+console.log("Year picker is initializing...");
+
+$(".yearpicker").datepicker({
+    format: "yyyy",
+    viewMode: "years",
+    minViewMode: "years",
+    autoclose: true
+});
+
+console.log("Year picker initialized successfully!");
+
+if (localStorage.getItem("startYear")) {
+    $("#startYear").val(localStorage.getItem("startYear"));
+}
+if (localStorage.getItem("endYear")) {
+    $("#endYear").val(localStorage.getItem("endYear"));
+}
+d
+let lastSelectedInput = null;
+
+$(".yearpicker").on("focus", function () {
+    lastSelectedInput = $(this).attr("id");
+    if (lastSelectedInput === "endYear" && $("#startYear").val() === "") {
+        showGlobalMessage("Please select the start year first.");
+        $("#endYear").datepicker("hide");
+        $(this).blur();
+    }
+});
+
+$(".yearpicker").on("changeDate", function () {
+    localStorage.setItem("startYear", $("#startYear").val());
+    localStorage.setItem("endYear", $("#endYear").val());
+
+    validateYearRange();
+    updateChecklistStatus();
+});
+
+$(".yearpicker").on("keydown paste input", function (e) {
+    e.preventDefault();
+    $(this).blur();
+});
+
+function validateYearRange() {
+    let startYear = parseInt($("#startYear").val());
+    let endYear = parseInt($("#endYear").val());
+
+    $("#startYear").css("border-color", "");
+    $("#endYear").css("border-color", "");
+
+    if (!isNaN(startYear) && !isNaN(endYear)) {
+        let yearSpan = endYear - startYear + 1;
+
+        if (startYear > endYear) {
+            showGlobalMessage("Start year should not be greater than the end year.");
+            if (lastSelectedInput === "startYear") {
+                $("#startYear").val("");
+                $("#endYear").val("");
+            } else if (lastSelectedInput === "endYear") {
+                $("#endYear").val("");
+            }
+
+            $("#startYear").css("border-color", "#dc3545");
+            $("#endYear").css("border-color", "#dc3545");
+            localStorage.removeItem("startYear");
+            localStorage.removeItem("endYear");
+
+            return;
+        }
+        if (yearSpan !== 5) {
+            showGlobalMessage("The selected range should cover 5 academic years (e.g., 2020–2021 to 2024–2025).");
+
+            if (lastSelectedInput === "startYear") {
+                $("#startYear").val("");
+                $("#endYear").val("");
+            } else if (lastSelectedInput === "endYear") {
+                $("#endYear").val("");
+            }
+            $("#startYear").css("border-color", "#dc3545");
+            $("#endYear").css("border-color", "#dc3545");
+            localStorage.removeItem("startYear");
+            localStorage.removeItem("endYear");
+
+            return;
+        }
+        const academicYears = [];
+        for (let i = startYear; i <= endYear; i++) {
+            academicYears.push(`${i}-${i + 1}`);
+        }
+        console.log("Academic Year Range:", academicYears);
+        $("#startYear").css("border-color", "#28a745");
+        $("#endYear").css("border-color", "#28a745");
+        $.ajax({
+            url: '/api/check-year-range',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                startYear: startYear,
+                endYear: endYear
+            }),
+            success: function(response) {
+                console.log(response.message);
+            },
+            error: function(xhr, status, error) {
+                if (xhr.status === 404) {
+                    showGlobalMessage(xhr.responseJSON.error);
+                    $("#startYear").val("");
+                    $("#endYear").val("");
+                    showGlobalMessage("Please select a new range.");
+                    $("#startYear").css("border-color", "#dc3545");
+                    $("#endYear").css("border-color", "#dc3545");
+                    localStorage.removeItem("startYear");
+                    localStorage.removeItem("endYear");
+                } else {
+                    showGlobalMessage("An error occurred. Please try again.");
+                }
+            }
+        });
+    }
+}
+});
+
+let currentPageLoad = 1;
+let totalPagesLoad = 1;
+const recordsPerPageLoad = 10;
+let dirtyRecords = [];
+function loadStateFromLocalStorage() {
+    const savedState = localStorage.getItem('dirtyRecordsState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        currentPageLoad = state.currentPageLoad || 1;
+        totalPagesLoad = state.totalPagesLoad || 1;
+        dirtyRecords = state.dirtyRecords || [];
+    }
+    updateTableState();
+}
+
+function saveStateToLocalStorage() {
+    const state = {
+        currentPageLoad,
+        totalPagesLoad,
+        dirtyRecords
+    };
+    localStorage.setItem('dirtyRecordsState', JSON.stringify(state));
+}
+
+function updateTableState() {
+    if (dirtyRecords.length > 0) {
+        totalPagesLoad = Math.ceil(dirtyRecords.length / recordsPerPageLoad);
+        currentPageLoad = Math.min(currentPageLoad, totalPagesLoad);
+        renderDirtyRecords();
+        updatePaginationDisplay();
+    } else {
+        const hasExistingData = localStorage.getItem('dirtyRecordsState') !== null;
+        const message = hasExistingData ? 
+            '✅ All data meets quality standards' : 
+            '📁 No dataset selected yet - Click "Load Data" to begin';
+        
+        $('#loadData_TableBody').html(`
+            <tr>
+                <td colspan="16" class="text-center py-4">
+                    <i class="fas ${hasExistingData ? 'fa-check-circle' : 'fa-database'} fa-3x mb-3"></i>
+                    <h5 class="mb-0">${message}</h5>
+                </td>
+            </tr>
+        `);
+        totalPagesLoad = 1;
+        currentPageLoad = 1;
+        updatePaginationDisplay();
+    }
+}
+
+function loadData_1() {
+    $.ajax({
+        url: '/api/check-existing-data',
+        type: 'GET',
+        success: function(response) {
+            if (response.has_data) {
+                $('#confirmResetModal').modal('show');
+            } else {
+                $('#dataModal').modal('show');
+            }
+        },
+        error: function(xhr) {
+            showGlobalMessage('Error checking existing data: ' + xhr.responseJSON?.error);
+        }
+    });
+}
+
+$('#confirmResetBtn').on('click', function() {
+    $('#confirmResetModal').modal('hide');
+    
+    $.ajax({
+        url: '/api/reset-tables',
+        type: 'POST',
+        success: function() {
+            localStorage.removeItem("startYear");
+            localStorage.removeItem("endYear");
+            localStorage.removeItem('dirtyRecordsState');
+            localStorage.removeItem('preprocessedState');
+            dirtyRecords = [];
+            currentPageLoad = 1;
+            totalPagesLoad = 1;
+            currentPageTrain = 1;
+            totalPagesTrain = 1;
+            currentCategories = {};
+            document.getElementById('startYear').value = '';
+            document.getElementById('endYear').value = '';
+            $('.checklist-col input[type="checkbox"]').prop('checked', false)
+                .closest('li').css('color', '#dc3545');
+            $('#progressBarInner').css('width', '0%').attr('aria-valuenow', 0);
+            $('#progressText').text('0%');
+            $('#rowsAddedText').text('');
+            $('#datasetMessage').text('');
+            updateTableState();
+            $('#trainDataTable thead').empty();
+            $('#trainData_TableBody').html(`
+                <tr>
+                    <td colspan="16" class="text-center py-4">
+                        <i class="fas fa-database fa-3x mb-3"></i>
+                        <h5 class="mb-0">No preprocessed data available</h5>
+                    </td>
+                </tr>
+            `);
+            $('#trainData_PageNum').text('Page 1 of 1');
+            $('#trainData_Prev').prop('disabled', true);
+            $('#trainData_Next').prop('disabled', true);
+            $('#accuracy, #precision, #recall, #f1, #trainingTime, #validationScore, #testScore, #trainScore').text('-');
+            $('#modelStatus').text('Not trained yet');
+
+            updateChecklistStatus();
+        },
+        error: function(xhr) {
+            showGlobalMessage('Error resetting tables: ' + xhr.responseJSON?.error);
+        }
+    });
+});
+
+function handlePagination(tableType, direction) {
+    if (tableType === 'load') {
+        const prevPage = currentPageLoad;
+        if (direction === 'prev' && currentPageLoad > 1) currentPageLoad--;
+        if (direction === 'next' && currentPageLoad < totalPagesLoad) currentPageLoad++;
+        if (prevPage !== currentPageLoad) {
+            renderDirtyRecords();
+            updatePaginationDisplay();
+            saveStateToLocalStorage();
+        }
+    }
+    else if (tableType === 'train') {
+        const prevPage = currentPageTrain;
+        if (direction === 'prev' && currentPageTrain > 1) currentPageTrain--;
+        if (direction === 'next' && currentPageTrain < totalPagesTrain) currentPageTrain++;
+        if (prevPage !== currentPageTrain) {
+            fetchFinalData(currentPageTrain);
+        }
+    }
+}
+
+function renderDirtyRecords() {
+    const start = (currentPageLoad - 1) * recordsPerPageLoad;
+    const end = start + recordsPerPageLoad;
+    const pageRecords = dirtyRecords.slice(start, end);
+
+    $('#loadData_TableBody').empty();
+    pageRecords.forEach(record => {
+        $('#loadData_TableBody').append(`
+            <tr>
+                <td>${record.id || ''}</td>
+                <td>${record.branch || ''}</td>
+                <td>${record.student_id || ''}</td>
+                <td>${record.school_year || ''}</td>
+                <td>${record.semester || ''}</td>
+                <td>${record.department || ''}</td>
+                <td>${record.program || ''}</td>
+                <td>${record.year_level || ''}</td>
+                <td>${record.classified_as || ''}</td>
+                <td>${record.status || ''}</td>
+                <td>${record.last_school_attended || ''}</td>
+                <td>${record.gender || ''}</td>
+                <td>${record.birth_date || ''}</td>
+                <td>${record.civil_status || ''}</td>
+                <td>${record.address || ''}</td>
+                <td>${record.birth_place || ''}</td>
+            </tr>
+        `);
+    });
+}
+
+function updatePaginationDisplay() {
+    $('#loadData_PageNum').text(`Page ${currentPageLoad} of ${totalPagesLoad}`);
+    $('#loadData_Prev').prop('disabled', currentPageLoad === 1);
+    $('#loadData_Next').prop('disabled', currentPageLoad === totalPagesLoad);
+}
+$(document).ready(function () {
+    loadStateFromLocalStorage();
+    updateChecklistStatus();
+    function validateYears() {
+        const start = $('#startYear').val();
+        const end = $('#endYear').val();
+        return start !== '' && end !== '';
+    }
+    $('#schoolDatasetBtn').on('click', function () {
+        if (!validateYears()) {
+            alert('Please select start and end years.');
+            return;
+        }
+        $('#datasetMessage')
+            .text('Processing school dataset...')
+            .addClass('text-warning')
+            .removeClass('text-success');
+
+        $('#progressModal').modal('show');
+        $('#progressBar').css('width', '1%').attr('aria-valuenow', 1);
+        $('#progressText').text('1%');
+
+        $.ajax({
+            url: '/api/process-school-dataset',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                startYear: $('#startYear').val(),
+                endYear: $('#endYear').val(),
+            }),
+            success: function (response) {
+                let progress = 1;
+                const interval = setInterval(() => {
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        $('#progressModal').modal('hide');
+                        
+                        dirtyRecords = response.dirty_records || [];
+                        const insertedRows = response.inserted_rows || 0;
+                        
+                        if (dirtyRecords.length > 0 || insertedRows > 0) {
+                            saveStateToLocalStorage();
+                            updateTableState();
+                            $('#dataModal').modal('show');
+                            
+                            showGlobalMessage(`Processed ${insertedRows} rows. ${
+                                dirtyRecords.length > 0 ? 
+                                `${dirtyRecords.length} require cleaning` : 
+                                'All data clean!'
+                            }`);
+                        } else {
+                            showGlobalMessage('No data was processed - please check your dataset');
+                        }
+                    } else {
+                        progress += 1;
+                        $('#progressBar').css('width', `${progress}%`)
+                            .attr('aria-valuenow', progress);
+                        $('#progressText').text(`${progress}%`);
+                    }
+                }, 25);
+                updateChecklistStatus();
+            },
+            error: function (xhr) {
+                $('#progressModal').modal('hide');
+                showGlobalMessage(`Error: ${xhr.responseJSON?.error || 'Failed to process dataset'}`);
+            }
+        });
+    });
+    $('#publicDatasetBtn').on('click', function () {
+        if (!validateYears()) {
+            showGlobalMessage('Please select start and end years.');
+            return;
+        }
+        alert('Public dataset processing is coming soon!');
+    });
+});
+
+function cleanData_1() {
+
+    if (!confirm("This will standardize all text to UPPERCASE and fill empty fields with 'UNKNOWN'. Continue?")) return;
+
+    $('#cleanModal').modal('show');
+    const $steps = $('.cleaning-steps .step');
+    const $progress = $('#cleanProgress');
+    const $results = $('#cleanResults');
+    $steps.removeClass('completed').find('.fa-sync').addClass('fa-spin');
+    $progress.css('width', '0%');
+    $results.empty();
+
+    $.ajax({
+        url: '/api/clean-data',
+        type: 'POST',
+        success: function(response) {
+            $steps.each(function(index) {
+                setTimeout(() => {
+                    $(this).addClass('completed')
+                           .find('.fa-sync').removeClass('fa-spin');
+                    $progress.css('width', `${(index + 1) * 33}%`);
+                }, index * 800);
+            });
+            setTimeout(() => {
+                $progress.css('width', '100%');
+                $results.html(`
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        ${response.cleaned_rows} dirty records, dataset cleaned successfully!<br>
+                        ${response.remaining_dirty} records need manual review.
+                    </div>
+                `);
+                dirtyRecords = response.remaining_dirty_list || [];
+                currentPageLoad = 1;
+                updateTableState();
+                saveStateToLocalStorage();
+                updateChecklistStatus();
+                $("#startYear").css("border-color", "#28a745");
+                $("#endYear").css("border-color", "#28a745");
+                setTimeout(() => $('#cleanModal').modal('hide'), 3000);
+            }, 3000);
+        },
+        error: function(xhr) {
+            $results.html(`
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i>
+                    Cleaning failed: ${xhr.responseJSON?.error || 'Server error'}
+                </div>
+            `);
+            $steps.find('.fa-sync').removeClass('fa-spin');
+        }
+    });
+}
+
+
+//======================================= STAGE 2: TRAIN READY STAGE =======================================//
+let currentPageTrain = 1;
+let totalPagesTrain = 1;
+const recordsPerPageTrain = 10;
+let currentCategories = {};
+
+function readyTrainData() {
+    const $modal = $('#preprocessModal');
+    const $steps = $('.preprocess-steps .step');
+    const $progress = $('#preprocessProgress');
+    const $results = $('#preprocessResults');
+
+    $modal.modal('show');
+    $steps.removeClass('completed').find('.fa-sync').removeClass('fa-spin');
+    $progress.css('width', '0%');
+    $results.empty();
+    processStep1();
+
+    function processStep1() {
+        $steps.eq(0).find('.fa-sync').addClass('fa-spin');
+        $.ajax({
+            url: '/api/build-preprocessed-data',
+            type: 'POST',
+            success: function(response) {
+                $steps.eq(0).addClass('completed')
+                           .find('.fa-sync').removeClass('fa-spin');
+                $progress.css('width', '33%');
+                processStep2(response);
+            },
+            error: handleProcessingError
+        });
+    }
+
+    function processStep2(prevResponse) {
+        $steps.eq(1).find('.fa-sync').addClass('fa-spin');
+        $.ajax({
+            url: '/api/build-final-preprocessed-data',
+            type: 'POST',
+            success: function(finalResponse) {
+                currentCategories = finalResponse.stats.categories;
+                $steps.eq(1).addClass('completed')
+                           .find('.fa-sync').removeClass('fa-spin');
+                $progress.css('width', '66%');
+                processStep3(prevResponse, finalResponse);
+            },
+            error: handleProcessingError
+        });
+    }
+
+    function processStep3(prevResponse, finalResponse) {
+        $steps.eq(2).find('.fa-sync').addClass('fa-spin');
+        $progress.css('width', '100%');
+        totalPagesTrain = Math.ceil(finalResponse.stats.total_records / recordsPerPageTrain);
+        localStorage.setItem('preprocessedState', JSON.stringify({
+            currentPage: 1,
+            totalPages: totalPagesTrain,
+            categories: currentCategories
+        }));
+
+        setTimeout(() => {
+            $modal.modal('hide');
+            fetchFinalData(1);
+            showAlert('✅ Final preprocessed data ready!');
+            $steps.eq(2).addClass('completed')
+                       .find('.fa-sync').removeClass('fa-spin');
+        }, 1500);
+    }
+
+    function handleProcessingError(xhr) {
+        $results.html(`
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i>
+                Error: ${xhr.responseJSON?.error || 'Processing failed'}
+            </div>
+        `);
+        $steps.find('.fa-sync').removeClass('fa-spin');
+    }
+}
+
+function fetchFinalData(page = 1) {
+    $.ajax({
+        url: `/api/get-final-preprocessed-data?page=${page}`,
+        type: 'GET',
+        success: function(response) {
+            updateTableHeaders(currentCategories);
+            populateTableBody(response.data);
+            currentPageTrain = page;
+            totalPagesTrain = response.pagination?.total_pages || 1;
+            updatePagination(currentPageTrain, totalPagesTrain);
+
+            localStorage.setItem('preprocessedState', JSON.stringify({
+                currentPage: currentPageTrain,
+                totalPages: totalPagesTrain,
+                categories: currentCategories
+            }));
+        },
+
+        error: function(xhr) {
+            showAlert(`Error: ${xhr.responseJSON?.error || 'Data fetch failed'}`, 'error');
+        }
+    });
+}
+
+let currentHeaders = [];
+
+function updateTableHeaders(categories) {
+    const $thead = $('#trainDataTable thead');
+    $thead.empty();
+    
+    const headers = [
+        'age',
+        'start_year',
+        ...categories.departments?.map(d => `department_${d}`) || [],
+        ...categories.semesters?.map(s => `semester_${s}`) || [],
+        ...categories.genders?.map(g => `gender_${g}`) || [],
+        ...categories.civil_statuses?.map(c => `civil_status_${c}`) || [],
+        ...categories.statuses?.map(s => `status_${s}`) || [],
+        'enrolled_last_semester'
+    ];
+    currentHeaders = headers;
+
+    const headerRow = headers.map(h => 
+        `<th>${h.replace(/_/g, ' ').toUpperCase()}</th>`
+    ).join('');
+    
+    $thead.html(`<tr>${headerRow}</tr>`);
+}
+
+function populateTableBody(data) {
+    const $tbody = $('#trainData_TableBody');
+    $tbody.empty();
+
+    if (data && data.length > 0) {
+        data.forEach(record => {
+            const row = currentHeaders.map(header => {
+                const value = record[header];
+                const displayValue = (typeof value === 'number' && (value === 0 || value === 1)) 
+                                   ? value.toString() 
+                                   : value;
+                return `<td>${displayValue}</td>`;
+            }).join('');
+            $tbody.append(`<tr>${row}</tr>`);
+        });
+    } else {
+        $tbody.html(`
+            <tr>
+                <td colspan="${currentHeaders.length}" class="text-center py-4">
+                    <i class="fas fa-database fa-3x mb-3"></i>
+                    <h5 class="mb-0">No preprocessed data available</h5>
+                </td>
+            </tr>
+        `);
+    }
+}
+
+function updatePagination(currentPage, totalPages) {
+    $('#trainData_PageNum').text(`Page ${currentPage} of ${totalPages}`);
+    $('#trainData_Prev').prop('disabled', currentPage === 1);
+    $('#trainData_Next').prop('disabled', currentPage >= totalPages);
+}
+
+let searchTimeout = null;
+let currentSearchTerm = '';
+let currentPage = 1;
+
+$(document).ready(function() {
+    fetchData(currentPage);
+    $('#filterInput').on('input', function() {
+        currentSearchTerm = $(this).val().trim();
+        currentPage = 1;
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => fetchData(currentPage, currentSearchTerm), 300);
+    });
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        currentPage = page;
+        fetchData(currentPage, currentSearchTerm);
+    });
+});
+
+function fetchData(page, searchTerm = '') {
+    const url = searchTerm 
+        ? `/api/search-final-preprocessed-data?search=${encodeURIComponent(searchTerm)}&page=${page}`
+        : `/api/get-final-preprocessed-data?page=${page}`;
+
+    $.ajax({
+        url: url,
+        success: function(response) {
+            populateTableBody(response.data);
+            updatePagination(response.pagination);
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+}
+
+function updatePagination(pagination) {
+    const $pagination = $('#paginationControls');
+    $pagination.empty();
+
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        const active = i === pagination.current_page ? 'active' : '';
+        $pagination.append(`
+            <li class="page-item ${active}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>
+        `);
+    }
+}
+
+function showAlert(message, type = 'success') {
+    const alertBox = $('#trainingAlertBox');
+    alertBox.removeClass('alert-danger alert-success')
+           .addClass(type === 'error' ? 'alert-danger' : 'alert-success')
+           .find('#trainingAlertMsg').html(message);
+    alertBox.show().delay(type === 'error' ? 5000 : 3000).fadeOut();
+}
+
+$(document).ready(function() {
+    const savedState = localStorage.getItem('preprocessedState');
+    if(savedState) {
+        const state = JSON.parse(savedState);
+        currentCategories = state.categories || {};
+        currentPageTrain = state.currentPage || 1;
+        totalPagesTrain = state.totalPages || 1;
+        fetchFinalData(currentPageTrain);
+    }
+});
+
+
+// ======================== STAGE 3: XGBoost Training & Visualization ========================
+
+const stage3StorageKeys = {
+    learningRate: 'stage3_learningRate',
+    maxDepth: 'stage3_maxDepth',
+    currentPage: 'stage3_currentPage'
+};
+
+const learningRateSelect = document.getElementById('learningRateSelect');
+const maxDepthSelect = document.getElementById('maxDepthSelect');
+const trainModelBtn = document.getElementById('trainModelBtn');
+const modelStatus = document.getElementById('modelStatus');
+const trainingTime = document.getElementById('trainingTime');
+const predictionsBody = document.getElementById('predictionsBody');
+const prevPageBtn = document.getElementById('prevPageBtn');
+const nextPageBtn = document.getElementById('nextPageBtn');
+const currentPageSpan = document.getElementById('currentPage');
+const totalPagesSpan = document.getElementById('totalPages');
+const trainingHistoryList = document.getElementById('trainingHistory');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+let performanceChart;
+let thresholdChart;
+let featureImportanceChart;
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSelections();
+    loadPredictions();
+    loadTrainingHistory();
+    loadFeatureImportance();
+});
+
+function saveSelections() {
+    localStorage.setItem(stage3StorageKeys.learningRate, learningRateSelect.value);
+    localStorage.setItem(stage3StorageKeys.maxDepth, maxDepthSelect.value);
+}
+
+function loadSelections() {
+    const savedLearningRate = localStorage.getItem(stage3StorageKeys.learningRate);
+    const savedMaxDepth = localStorage.getItem(stage3StorageKeys.maxDepth);
+
+    if (savedLearningRate) learningRateSelect.value = savedLearningRate;
+    if (savedMaxDepth) maxDepthSelect.value = savedMaxDepth;
+}
+
+async function loadPredictions(page = 1) {
+    try {
+        localStorage.setItem(stage3StorageKeys.currentPage, page);
+
+        const response = await fetch(`/api/get-predictions?page=${page}&page_size=10`);
+        const data = await response.json();
+
+        predictionsBody.innerHTML = '';
+        data.predictions.forEach(pred => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${pred.student_id}</td>
+                <td>${(pred.probability * 100).toFixed(2)}%</td>
+            `;
+            predictionsBody.appendChild(row);
+        });
+
+        currentPageSpan.textContent = data.current_page;
+        totalPagesSpan.textContent = data.total_pages;
+
+        prevPageBtn.disabled = data.current_page === 1;
+        nextPageBtn.disabled = data.current_page === data.total_pages;
+    } catch (error) {
+        console.error('Error loading predictions:', error);
+    }
+}
+
+async function loadTrainingHistory() {
+    try {
+        const response = await fetch('/api/get-training-history');
+        const data = await response.json();
+
+        trainingHistoryList.innerHTML = '';
+        data.history.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.innerHTML = `
+                <strong>${item.learning_rate}/${item.max_depth}</strong> | 
+                Acc: ${(item.accuracy * 100).toFixed(1)}% | 
+                AUC: ${item.auc.toFixed(3)} <br>
+                <small>${new Date(item.created_at).toLocaleString()}</small>
+            `;
+            trainingHistoryList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Error loading history:', error);
+    }
+}
+
+async function loadFeatureImportance() {
+    try {
+        const response = await fetch('/api/get-feature-importance');
+        const data = await response.json();
+        const features = data.feature_importance.map(f => f.feature);
+        const importances = data.feature_importance.map(f => f.importance);
+        if (featureImportanceChart) featureImportanceChart.destroy();
+
+        const ctx = document.getElementById('featureImportanceChart').getContext('2d');
+        featureImportanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: features,
+                datasets: [{
+                    label: 'Importance',
+                    data: importances,
+                    backgroundColor: 'rgba(40, 167, 69, 0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading feature importance:', error);
+    }
+}
+
+async function trainModel() {
+    try {
+        modelStatus.textContent = 'Training...';
+        modelStatus.className = 'badge bg-warning';
+        document.getElementById('trainingSpinner').style.display = 'inline-block';
+
+        saveSelections();
+
+        const payload = {
+            learning_rate: learningRateSelect.value,
+            max_depth: maxDepthSelect.value
+        };
+
+        const response = await fetch('/api/train-model', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            modelStatus.textContent = 'Trained';
+            modelStatus.className = 'badge bg-success';
+            trainingTime.textContent = `Time: ${data.metrics.training_time_seconds}s`;
+
+            loadPredictions(1);
+            loadTrainingHistory();
+            loadFeatureImportance();
+            loadPerformanceChart(); 
+            loadThresholdChart();  
+        } else {
+            modelStatus.textContent = 'Error';
+            modelStatus.className = 'badge bg-danger';
+            alert('Training error: ' + data.error);
+        }
+    } catch (error) {
+        modelStatus.textContent = 'Error';
+        modelStatus.className = 'badge bg-danger';
+        console.error('Error training model:', error);
+    } finally {
+        document.getElementById('trainingSpinner').style.display = 'none';
+    }
+}
+
+async function clearTrainingHistory() {
+    if (!confirm('Clear training history?')) return;
+
+    try {
+        const response = await fetch('/api/clear-training-history', {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            loadTrainingHistory();
+        } else {
+            const data = await response.json();
+            alert('Error clearing history: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error clearing history:', error);
+    }
+}
+
+trainModelBtn.addEventListener('click', trainModel);
+prevPageBtn.addEventListener('click', () => {
+    const currentPage = parseInt(localStorage.getItem(stage3StorageKeys.currentPage) || '1');
+    if (currentPage > 1) loadPredictions(currentPage - 1);
+});
+nextPageBtn.addEventListener('click', () => {
+    const currentPage = parseInt(localStorage.getItem(stage3StorageKeys.currentPage) || '1');
+    loadPredictions(currentPage + 1);
+});
+clearHistoryBtn.addEventListener('click', clearTrainingHistory);
+
+
+async function loadPerformanceChart() {
+    try {
+        const response = await fetch('/api/get-training-history');
+        const data = await response.json();
+
+        const labels = data.history.map(item => new Date(item.created_at).toLocaleTimeString());
+        const accuracy = data.history.map(item => item.accuracy * 100);
+        const auc = data.history.map(item => item.auc * 100);
+
+        if (performanceChart) performanceChart.destroy();
+
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        performanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Accuracy (%)',
+                        data: accuracy,
+                        borderColor: 'rgba(40, 167, 69, 0.8)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'AUC (%)',
+                        data: auc,
+                        borderColor: 'rgba(23, 162, 184, 0.8)',
+                        backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true, max: 100 } }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading performance chart:', error);
+    }
+}
+
+
+async function loadThresholdChart() {
+    try {
+        const response = await fetch('/api/get-predictions?page=1&page_size=500');
+        const data = await response.json();
+        const probs = data.predictions.map(p => p.probability);
+        const thresholds = Array.from({length: 21}, (_, i) => i * 0.05);
+        const positives = thresholds.map(thresh => probs.filter(p => p >= thresh).length);
+
+        if (thresholdChart) thresholdChart.destroy();
+
+        const ctx = document.getElementById('thresholdChart').getContext('2d');
+        thresholdChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: thresholds.map(t => t.toFixed(2)),
+                datasets: [{
+                    label: '# Students Above Threshold',
+                    data: positives,
+                    borderColor: 'rgba(255, 193, 7, 0.9)',
+                    backgroundColor: 'rgba(255, 193, 7, 0.4)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading threshold chart:', error);
+    }
+}
+
+</script>
+        
+</body>
+</html>

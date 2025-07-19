@@ -1,0 +1,187 @@
+.historical__title {
+  margin-bottom: 1.5rem;
+  color: var(--color-primary);
+  font-weight: 700;
+  text-align: center;
+}
+
+.historical__container {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  max-width: 75rem;
+  width: 100%;
+  font-family: 'Figtree', sans-serif;
+  background-color: var(--color-white);
+  border-radius: var(--radius-2);
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.historical__filters {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.historical__filters select {
+  padding: 0.7rem;
+  border: 0.0625rem solid var(--color-primary);
+  border-radius: var(--radius-1);
+  outline: none;
+  width: 10rem;
+  cursor: pointer;
+  color: var(--color-primary);
+  background: var(--color-light);
+  transition: var(--transition);
+}
+
+.historical__filters select:hover {
+  border-color: var(--color-warning);
+}
+
+.historical__select__wrapper:hover i.uil-angle-down {
+  color: var(--color-warning);
+}
+
+.search_section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.search_section input[type="search"] {
+  padding: 0.7rem;
+  width: 100%;
+  border-radius: var(--radius-1);
+  border: 1px solid var(--color-gray-light);
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.search_section input[type="search"]:focus{
+  border-color: var(--color-warning);
+}
+
+
+.historical__report__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  table-layout: fixed;
+  empty-cells: show;
+}
+
+.historical__report__table thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.historical__report__table th {
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 600;
+  padding: 1rem;
+  text-align: center;
+  height: 3rem;
+}
+
+.historical__report__table tbody {
+  display: block;
+  width: 100%;
+  min-height: 20rem;
+  overflow-y: auto;
+}
+
+.historical__report__table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  height: 3rem;
+}
+
+.historical__report__table td {
+  padding: 1rem;
+  border: 0.0625rem solid #ccc;
+  text-align: center;
+  color: var(--color-dark);
+  word-wrap: break-word;
+}
+
+.historical__report__table td:empty::before {
+  content: "—";
+  color: var(--color-gray-light);
+  font-style: italic;
+}
+
+.historical__report__table tbody tr:hover {
+  background-color: var(--color-primary-light);
+}
+
+.btn__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.download__excel {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-1);
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 8rem;
+  text-align: center;
+}
+
+.download__excel:hover {
+  background-color: var(--color-success);
+  color: var(--color-white);
+  border-color: var(--color-white);
+  transform: translateY(-1px); 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.historical__select__wrapper {
+  position: relative;
+  display: inline-block;
+  width: 10rem;
+}
+
+.historical__select__wrapper i {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-gray-dark);
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.pagination button i.uil-arrow-circle-left,
+.pagination button i.uil-arrow-circle-right {
+    color: var(--color-dark);
+    font-size: 2rem; 
+    vertical-align: middle;
+    transition: color 0.3s ease;
+}
+
+.pagination button:hover i.uil-arrow-circle-left,
+.pagination button:hover i.uil-arrow-circle-right {
+    color: var(--color-warning);
+}

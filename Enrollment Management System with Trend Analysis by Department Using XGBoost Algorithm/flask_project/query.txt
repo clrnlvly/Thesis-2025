@@ -1,0 +1,149 @@
+-- Create preprocessing_data table
+CREATE TABLE preprocessing_data (
+  student_id VARCHAR(20),
+  school_year VARCHAR(10),
+  semester VARCHAR(10),
+  department VARCHAR(50),
+  status VARCHAR(20),
+  gender VARCHAR(10),
+  birth_date DATE,  -- Convert from VARCHAR to DATE
+  civil_status VARCHAR(20),
+  start_year INT,   -- Extracted from school_year
+  end_year INT,
+  age INT,          -- Calculated from birth_date and start_year
+  enrolled_last_semester BOOLEAN  -- Lagged enrollment status
+);
+
+INSERT INTO preprocessing_data (
+  student_id, school_year, semester, department, status, gender, 
+  birth_date, civil_status, start_year, end_year, age
+)
+SELECT 
+  student_id,
+  school_year,
+  semester,
+  TRIM(department),
+  status,
+  gender,
+  STR_TO_DATE(birth_date, '%m/%d/%Y'),  -- ✅ Correct format
+  civil_status,
+  CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED),
+  CAST(SUBSTRING_INDEX(school_year, '-', -1) AS UNSIGNED),
+  CAST(SUBSTRING_INDEX(school_year, '-', 1) AS SIGNED) - 
+    YEAR(STR_TO_DATE(birth_date, '%m/%d/%Y'))  -- ✅ Fixed
+FROM load_data;
+
+
+DROP TEMPORARY TABLE IF EXISTS prev_enroll_status;
+
+
+SELECT 
+  student_id,
+  school_year,
+  semester,
+  status,
+  LAG(status) OVER (
+    PARTITION BY student_id 
+    ORDER BY 
+      CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED),
+      CASE semester
+        WHEN '1ST' THEN 1
+        WHEN '2ND' THEN 2
+      END
+  ) AS prev_status
+FROM preprocessing_data
+LIMIT 20;
+
+
+UPDATE preprocessing_data p
+JOIN (
+    SELECT 
+        student_id,
+        school_year,
+        semester,
+        LAG(status) OVER (
+            PARTITION BY student_id 
+            ORDER BY 
+                CAST(SUBSTRING_INDEX(school_year, '-', 1) AS UNSIGNED),
+                CASE semester
+                    WHEN '1ST' THEN 1
+                    WHEN '2ND' THEN 2
+                    WHEN 'SUMMER' THEN 3
+                    ELSE 4
+                END
+        ) AS prev_status
+    FROM preprocessing_data
+) AS prev_status_data
+  ON p.student_id = prev_status_data.student_id
+  AND p.school_year = prev_status_data.school_year
+  AND p.semester = prev_status_data.semester
+SET p.enrolled_last_semester = (prev_status_data.prev_status = 'ENROLLED');
+
+SELECT student_id, school_year, semester, status, enrolled_last_semester
+FROM preprocessing_data
+ORDER BY student_id, school_year, semester
+LIMIT 20;
+
+
+-- For storing individual predictions
+CREATE TABLE trained_model_predictions (
+    prediction_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL,
+    school_year VARCHAR(10) NOT NULL,
+    semester VARCHAR(10) NOT NULL,
+    department VARCHAR(50) NOT NULL,
+    prediction_probability FLOAT NOT NULL,
+    prediction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_department (department),
+    INDEX idx_semester (semester),
+    INDEX idx_year (school_year)
+);
+
+-- For aggregated time series data (Stage 4)
+CREATE TABLE department_enrollment_trends (
+    trend_id INT AUTO_INCREMENT PRIMARY KEY,
+    department VARCHAR(50) NOT NULL,
+    semester VARCHAR(10) NOT NULL,
+    school_year VARCHAR(10) NOT NULL,
+    predicted_enrollment_rate FLOAT NOT NULL,
+    calculation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_trend (department, semester, school_year)
+);
+
+CREATE TABLE IF NOT EXISTS model_runs (
+    run_id VARCHAR(50) PRIMARY KEY,
+    learning_rate FLOAT NOT NULL,
+    max_depth INT NOT NULL,
+    training_split FLOAT NOT NULL,
+    accuracy FLOAT NOT NULL,
+    precision_score FLOAT NOT NULL,  -- Changed here
+    recall FLOAT NOT NULL,
+    f1 FLOAT NOT NULL,
+    train_score FLOAT NOT NULL,
+    val_score FLOAT NOT NULL,
+    test_score FLOAT NOT NULL,
+    training_time VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS enrollment_predictions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    run_id VARCHAR(50),
+    student_id VARCHAR(50),
+    department VARCHAR(20),
+    semester VARCHAR(10),
+    school_year VARCHAR(20),
+    prediction_score FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (run_id) REFERENCES model_runs(run_id)
+);
+
+
+CREATE TABLE training_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    learning_rate FLOAT,
+    max_depth INT,
+    accuracy FLOAT,
+    auc FLOAT,
+    training_time FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

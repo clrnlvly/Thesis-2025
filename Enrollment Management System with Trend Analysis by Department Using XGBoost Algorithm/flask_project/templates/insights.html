@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/insights.css">
+    <title>Insights</title>
+</head>
+<body>
+    <section class="insights__content">
+        <div class="insights__chart">
+            <div class="insights__dropdown">
+                <h2>Department:</h2>
+                <div class="insights__select-wrapper">
+                    <select name="department" class="insights__select">
+                        <option value="">Select Department</option>
+                        <option value="science">Science</option>
+                        <option value="math">Math</option>
+                        <option value="arts">Arts</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+            </div>
+            <h3>Enrollment Trends</h3>
+            <div class="insights__lineGraph">
+                <canvas id="insights__lineGraph-canvas" class="insights__lineGraph-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="insights__recommendations">
+            <h3>Recommendations:</h3>
+            <div class="insights__row">
+                <label for="staff">Staff:</label>
+                <input type="text" id="staff" name="staff" class="insights__input-staff" 
+                       value="12 Teachers (1:30 ratio)">
+                
+                <label for="classroom">Classroom:</label>
+                <input type="text" id="classroom" name="classroom" class="insights__input-classroom"
+                       value="8 Rooms (25 students each)">
+                
+                <label for="uniform">Uniform:</label>
+                <input type="text" id="uniform" name="uniform" class="insights__input-uniform"
+                       value="250 Sets (Various sizes)">
+            </div>
+            
+            <div class="insights__row warnings">
+                <span>&#9888; Insufficient staff for 2024 projections</span>
+                <span>&#9888; 5 more classrooms needed by Q3</span>
+                <span>&#9888; Low inventory for Medium sizes</span>
+            </div>
+        
+            <button class="insights__btn">Download PDF</button>
+        </div>   
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('insights__lineGraph-canvas').getContext('2d');
+            const enrollmentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May'],
+                    datasets: [{
+                        label: 'Enrollment',
+                        data: [50, 70, 80, 60, 90],
+                        borderColor: '#5cb85c',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+        
+</body>
+</html>

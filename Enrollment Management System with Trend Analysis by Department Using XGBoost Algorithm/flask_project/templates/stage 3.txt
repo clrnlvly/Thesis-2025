@@ -1,0 +1,52 @@
+<div class="forecast__container">
+    <!-- 3️⃣ Create Features Stage -->
+    <div class="forecast__stage" id="stage3">
+        <h2>⚙️ Create Features</h2>
+        <div class="paper-container">
+            <i class="fas fa-paperclip paperclip"></i>
+            <div class="paper-header">Reminders:</div>
+            <ul class="paper-list">
+                <li>Create useful lag features (e.g., previous year enrollment).</li>
+                <li>Generate moving averages (e.g., 3-year average).</li>
+                <li>Encode categorical features (e.g., Department).</li>
+                <li>Consider adding dropout rate and growth rate as features.</li>
+            </ul>
+        </div>
+        <div class="year-range-container">
+            <div class="year-range">
+                <!--leave empty-->
+            </div>     
+            <div class="buttons-container">
+                <button class="load__btn" onclick="generateData_3()">Generate</button>
+                <button class="check__btn" onclick="checkData_3()">Check</button>
+                <button class="fix__btn" onclick="fixData_3()">Fix</button>
+                <button class="save__btn" onclick="saveData_3()">Save</button>
+            </div>
+        </div>
+        <table class="forecast__table" id="featuresTable">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Enrolled</th>
+                    <th>Lag(1)</th>
+                    <th>Moving Average(3)</th>
+                    <th>Dropout Rate</th>
+                    <th>Growth Rate</th>
+                </tr>
+            </thead>
+            <tbody id="features_TableBody">
+                <!-- Data will load here dynamically -->
+            </tbody>
+        </table>
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            <button onclick="handlePagination(3, 'prev')">
+                <i class="uil uil-arrow-circle-left"></i> Prev
+            </button>
+            <span id="features_PageNum">Page 1</span>
+            <button onclick="handlePagination(3, 'next')">
+                Next <i class="uil uil-arrow-circle-right"></i>
+            </button>
+        </div>
+    </div>
+</div>

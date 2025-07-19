@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/reports.css">
+    <title>Enrollment Reports</title>
+</head>
+
+<body>
+    <section class="reports__content">
+        <div id="historical-container" class="historical__container">
+            <h2 id="historical-title" class="historical__title">Enrollment Historical Table</h2>
+            <div id="search-section" class="search_section">
+                <i class="uil uil-search"></i>
+                <input type="search" id="historical-search" placeholder="Search" onkeyup="search_table1()">
+            </div>
+            <div id="historical-filters" class="historical__filters">
+                <div class="historical__select__wrapper">
+                    <select id="filter-branch" class="historical__filter__branch">
+                        <option>Branch</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <div class="historical__select__wrapper">
+                    <select id="filter-department" class="historical__filter__department">
+                        <option>Department</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <div class="historical__select__wrapper">
+                    <select id="filter-schoolyear" class="historical__filter__schoolyear">
+                        <option>School Year</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div> 
+                <div class="historical__select__wrapper">
+                    <select id="filter-semester" class="historical__filter__semester">
+                        <option>Semester</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>         
+                <div class="historical__select__wrapper">
+                    <select id="filter-status" class="historical__filter__status">
+                        <option>Status</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>               
+            </div>
+
+            <table id="enrollment-historical-table" class="historical__report__table">
+                <thead>
+                    <tr>
+                        <th>Branch</th>
+                        <th>ID</th>
+                        <th>Surname</th>
+                        <th>Year-Level</th>
+                        <th>Department</th>
+                        <th>School Year</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="enrollment-historical-table-body">
+                    <!-- Data will load here dynamically -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button onclick="handlePagination(1, 'prev')">
+                    <i class="uil uil-arrow-circle-left"></i> Prev
+                </button>
+                <span id="historical_PageNum">Page 1</span>
+                <button onclick="handlePagination(1, 'next')">
+                    Next <i class="uil uil-arrow-circle-right"></i>
+                </button>
+            </div>
+
+            <div id="historical-actions" class="btn__actions">
+                <button id="download-excel" class="download__excel">Download Excel</button>
+            </div>    
+        </div>
+
+        <div id="popularity-container" class="historical__container">
+            <h2 id="popularity-title" class="historical__title">Popularity Rankings Table</h2>
+            <div id="popularity-search-section" class="search_section">
+                <i class="uil uil-search"></i>
+                <input type="search" id="popularity-search" placeholder="Search" onkeyup="search_table2()">
+            </div>
+            <div id="popularity-filters" class="historical__filters">
+                <div class="historical__select__wrapper">
+                    <select id="popularity-filter-department" class="historical__filter">
+                        <option>Department</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <div class="historical__select__wrapper">
+                    <select id="popularity-filter-schoolyear" class="historical__filter">
+                        <option>School Year</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div> 
+                <div class="historical__select__wrapper">
+                    <select id="popularity-filter-semester" class="historical__filter">
+                        <option>Semester</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>                  
+             </div>
+            <table id="popularity-rankings-table" class="historical__report__table">
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>School Year</th>
+                        <th>Semester</th>
+                        <th>Program/Strand</th>
+                        <th>Students Enrolled</th>
+                        <th>Rank</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="popularity-rankings-table-body">
+                    <!-- Data will load here dynamically -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button onclick="handlePagination(2, 'prev')">
+                    <i class="uil uil-arrow-circle-left"></i> Prev
+                </button>
+                <span id="popularity_PageNum">Page 1</span>
+                <button onclick="handlePagination(2, 'next')">
+                    Next <i class="uil uil-arrow-circle-right"></i>
+                </button>
+            </div>
+            <div id="popularity-actions" class="btn__actions">
+                <button id="download-popularity-excel" class="download__excel">Download Excel</button>
+            </div>
+        </div>
+
+        <div id="retention-container" class="historical__container">
+            <h2 id="retention-title" class="historical__title">Retention and Dropout Rates Table</h2>
+            <div id="retention-search-section" class="search_section">
+                <i class="uil uil-search"></i>
+                <input type="search" id="retention-search" placeholder="Search" onkeyup="search_table3()">
+            </div>
+            <div id="retention-filters" class="historical__filters">
+                <div class="historical__select__wrapper">
+                    <select id="retention-filter-schoolyear" class="historical__filter">
+                        <option>School Year</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <div class="historical__select__wrapper">
+                    <select id="retention-filter-semester" class="historical__filter">
+                        <option>Semester</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>                 
+            </div>
+            <table id="retention-dropout-table" class="historical__report__table">
+                <thead>
+                    <tr>
+                        <th>School Year</th>
+                        <th>Semester</th>
+                        <th>New Students</th>
+                        <th>Alumni</th>
+                        <th>Dropout Rate (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="retention-dropout-table-body">
+                    <!-- Data will load here dynamically -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button onclick="handlePagination(3, 'prev')">
+                    <i class="uil uil-arrow-circle-left"></i> Prev
+                </button>
+                <span id="retention_PageNum">Page 1</span>
+                <button onclick="handlePagination(3, 'next')">
+                    Next <i class="uil uil-arrow-circle-right"></i>
+                </button>
+            </div>
+            <div id="retention-actions" class="btn__actions">
+                <button id="download-retention-excel" class="download__excel">Download Excel</button>
+            </div>     
+        </div>
+
+        <div id="feeder-container" class="historical__container">
+            <h2 id="feeder-title" class="historical__title">Feeder School and Market Analysis</h2>
+            <div id="feeder-search-section" class="search_section">
+                <i class="uil uil-search"></i>
+                <input type="search" id="feeder-search" placeholder="Search" onkeyup="search_table4()">
+            </div>
+            <div id="feeder-filters" class="historical__filters">
+                <div class="historical__select__wrapper">
+                    <select id="feeder-filter-schoolyear" class="historical__filter__schoolyear">
+                        <option>School Year</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <div class="historical__select__wrapper">
+                    <select id="feeder-filter-program" class="historical__filter__program">
+                        <option>Program/Strand</option>
+                    </select>
+                    <i class="uil uil-angle-down"></i>
+                </div>          
+            </div>
+            <table id="feeder-table" class="historical__report__table">
+                <thead>
+                    <tr>
+                        <th>School Year</th>
+                        <th>Feeder School</th>
+                        <th>Total Students</th>
+                        <th>Popular Program/Strand</th>
+                        <th>Year Trend</th>
+                        <th>Trend Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="feeder-table-body">
+                    <!-- Data will load here dynamically -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button onclick="handlePagination(4, 'prev')">
+                    <i class="uil uil-arrow-circle-left"></i> Prev
+                </button>
+                <span id="feeder_PageNum">Page 1</span>
+                <button onclick="handlePagination(4, 'next')">
+                    Next <i class="uil uil-arrow-circle-right"></i>
+                </button>
+            </div>
+            <div id="feeder-actions" class="btn__actions">
+                <button id="feeder-download-excel" class="download__excel">Download Excel</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const config = {
+            itemsPerPage: 10,
+            apiBase: 'http://127.0.0.1:5000/api/',
+            currentPages: {1: 1, 2: 1, 3: 1, 4: 1},
+            tableEndpoints: {
+                1: 'enrollment-historical',
+                2: 'popularity-rankings',
+                3: 'retention-rates',
+                4: 'feeder-schools'
+            },
+            tableElements: {
+                1: { 
+                    body: 'enrollment-historical-table-body', 
+                    pageNum: 'historical_PageNum',
+                    columns: ['branch', 'stud_id', 'last_name', 'year_level', 
+                             'department', 'school_year', 'semester', 'status'],
+                    format: {
+                        year_level: (value) => {
+                            const yearMap = {1: '1st yr', 2: '2nd yr', 3: '3rd yr', 4: '4th yr'};
+                            return yearMap[value] || value;
+                        },
+                        semester: (value) => {
+                            const semesterMap = {1: '1st sem', 2: '2nd sem'};
+                            return semesterMap[value] || value;
+                        }
+                    }
+                },
+                2: { 
+                    body: 'popularity-rankings-table-body', 
+                    pageNum: 'popularity_PageNum',
+                    columns: ['department', 'school_year', 'semester', 
+                             'prog_strand', 'stud_enrolled', 'rank', 'rank_percentage'],
+                    format: {
+                        semester: (value) => {
+                            const semesterMap = {1: '1st sem', 2: '2nd sem'};
+                            return semesterMap[value] || value;
+                        }
+                    }
+                },
+                3: { 
+                    body: 'retention-dropout-table-body', 
+                    pageNum: 'retention_PageNum',
+                    columns: ['school_year', 'semester', 'new_stud_count', 
+                              'alumni_stud_count', 'dropout_rate'],
+                    format: {
+                        semester: (value) => {
+                            const semesterMap = {1: '1st sem', 2: '2nd sem'};
+                            return semesterMap[value] || value;
+                        }
+                    }
+                },
+                4: { 
+                    body: 'feeder-table-body', 
+                    pageNum: 'feeder_PageNum',
+                    columns: ['school_year', 'feeder_school', 'total_stud', 
+                              'pop_prgstrnd', 'year_trend', 'trend_rate']
+                }
+            }
+        };
+        window.addEventListener('load', () => {
+            Object.keys(config.tableEndpoints).forEach(tableNum => {
+                fetchTableData(parseInt(tableNum));
+            });
+        });
+        function handlePagination(tableNum, action) {
+            const originalPage = config.currentPages[tableNum];
+            const totalPages = getCurrentTotalPages(tableNum);
+    
+            if (action === 'prev' && originalPage > 1) {
+                config.currentPages[tableNum]--;
+            } else if (action === 'next' && originalPage < totalPages) {
+                config.currentPages[tableNum]++;
+            }
+    
+            if (config.currentPages[tableNum] !== originalPage) {
+                fetchTableData(tableNum);
+            }
+        }
+
+        async function fetchTableData(tableNum) {
+            try {
+                const endpoint = config.tableEndpoints[tableNum];
+                const url = new URL(`${config.apiBase}${endpoint}`);
+                url.searchParams.set('page', config.currentPages[tableNum]);
+                url.searchParams.set('per_page', config.itemsPerPage);
+    
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const { data, pagination } = await response.json();
+                
+                validateCurrentPage(tableNum, pagination.total_pages);
+                updateTableDisplay(tableNum, data);
+                updatePaginationDisplay(tableNum, pagination.total_pages);
+    
+            } catch (error) {
+                console.error(`Table ${tableNum} error:`, error);
+                handleFetchError(tableNum, error);
+            }
+        }
+        function updateTableDisplay(tableNum, data) {
+            const tbody = document.getElementById(config.tableElements[tableNum].body);
+            const columns = config.tableElements[tableNum].columns;
+            const formatters = config.tableElements[tableNum].format || {};
+    
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    ${columns.map(col => {
+                        const rawValue = item[col];
+                        const formattedValue = formatters[col] 
+                            ? formatters[col](rawValue)
+                            : rawValue;
+                        return `<td>${formattedValue}</td>`;
+                    }).join('')}
+                </tr>
+            `).join('');
+            searchTable(tableNum);
+        }
+        function updatePaginationDisplay(tableNum, totalPages) {
+            const pageElement = document.getElementById(config.tableElements[tableNum].pageNum);
+            const currentPage = config.currentPages[tableNum];
+            if (currentPage > totalPages && totalPages > 0) {
+                config.currentPages[tableNum] = totalPages;
+            }
+            
+            pageElement.textContent = `Page ${config.currentPages[tableNum]} of ${totalPages}`;
+            updateButtonStates(tableNum, totalPages);
+        }
+        function validateCurrentPage(tableNum, totalPages) {
+            if (config.currentPages[tableNum] > totalPages && totalPages > 0) {
+                config.currentPages[tableNum] = totalPages;
+            }
+        }
+    
+        function updateButtonStates(tableNum, totalPages) {
+            const pageElement = document.getElementById(config.tableElements[tableNum].pageNum);
+            const paginationDiv = pageElement.parentElement;
+            const currentPage = config.currentPages[tableNum];
+            
+            paginationDiv.querySelector('button:first-child').disabled = currentPage === 1;
+            paginationDiv.querySelector('button:last-child').disabled = currentPage === totalPages;
+        }
+    
+        function getCurrentTotalPages(tableNum) {
+            const pageText = document.getElementById(config.tableElements[tableNum].pageNum)
+                .textContent.split(' of ')[1];
+            return parseInt(pageText) || 1;
+        }
+    
+        function handleFetchError(tableNum, error) {
+            if (error.message.includes('404') || error.message.includes('400')) {
+                config.currentPages[tableNum]--;
+            }
+            updatePaginationDisplay(tableNum, getCurrentTotalPages(tableNum));
+        }
+        function searchTable(tableNum) {
+            const searchIds = {
+                1: 'historical-search',
+                2: 'popularity-search', 
+                3: 'retention-search',
+                4: 'feeder-search'
+            };
+
+            const filter = document.getElementById(searchIds[tableNum]).value.toLowerCase();
+            const rows = document.querySelectorAll(`#${config.tableElements[tableNum].body} tr`);
+        
+            rows.forEach(row => {
+                const cells = Array.from(row.getElementsByTagName('td'));
+                const match = cells.some(cell => cell.innerText.toLowerCase().includes(filter));
+                row.style.display = match ? '' : 'none';
+            });
+        }
+        document.getElementById('historical-search').addEventListener('input', () => searchTable(1));
+        document.getElementById('popularity-search').addEventListener('input', () => searchTable(2));
+        document.getElementById('retention-search').addEventListener('input', () => searchTable(3));
+        document.getElementById('feeder-search').addEventListener('input', () => searchTable(4));
+    </script>
+    
+    </body>
+</html>
+

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Trends Dashboard</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="container nav__container"> 
+            <a href="{{ url_for('home') }}" class="nav__logo">
+                <img src="{{ url_for('static', filename='images/logo_3.png') }}" alt="Logo">
+            </a>
+            <div class="nav__profile-wrapper">  
+                <div class="nav__profile">
+                    <div class="nav__profile-photo">
+                        <img src="{{ url_for('static', filename='images/default-user.png') }}" alt="Profile Photo">
+                    </div>
+                    <h5>Username</h5>
+                    <i class="uil uil-angle-down"></i>
+                </div>
+                <button class="nav__menu-btn">
+                    <i class="uil uil-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard__grid">
+        <nav class="sidebar">
+            <a href="#" class="sidebar__link" data-content="/forecast_stages">
+                <i class="uil uil-comparison"></i>
+                <h5>Forecast</h5>
+            </a>
+            <!-- <a href="#" class="sidebar__link" data-content="/reports">
+                <i class="uil uil-folder-open"></i>
+                <h5>Reports</h5>
+            </a>
+            <a href="#" class="sidebar__link" data-content="/settings">
+                <i class="uil uil-sliders-v-alt"></i>
+                <h5>Parameters</h5>
+            </a> -->
+        </nav>
+
+        <div class="main__content">
+            <iframe src="/forecast_stages" frameborder="0" id="contentFrame"></iframe>
+        </div>
+    </div>
+
+    <script>
+       document.addEventListener("DOMContentLoaded", () => {
+        const links = document.querySelectorAll(".sidebar__link");
+        const iframe = document.getElementById("contentFrame");
+        const savedPage = localStorage.getItem("currentPage") || "/forecast_stages";
+        iframe.src = savedPage;
+
+        links.forEach(link => {
+            if (link.getAttribute("data-content") === savedPage) {
+                document.querySelector(".sidebar__link.active")?.classList.remove("active");
+                link.classList.add("active");
+            }
+        });
+        links.forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                const page = link.getAttribute("data-content");
+                iframe.src = page;
+                localStorage.setItem("currentPage", page);
+                document.querySelector(".sidebar__link.active")?.classList.remove("active");
+                link.classList.add("active");
+            });
+        });
+    });
+
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

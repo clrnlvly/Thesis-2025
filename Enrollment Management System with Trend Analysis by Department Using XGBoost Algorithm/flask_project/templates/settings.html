@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/settings.css">
+    <title>Settings</title>
+</head>
+<body>
+<section class="settings__content">
+    <div class="section__heading">
+        <h2>SENIOR HIGHSCHOOL</h2>
+        <i class="uil uil-refresh"></i>
+    </div>
+
+    <div class="main__container">
+        <div class="bigbox__one">
+            <div class="boxes__grid">      
+                <div class="small__box">                
+                    <h3>Staff</h3>
+                    <div class="form-group">
+                        <label for="sd_ratio_shs">Staff Per Department Ratio: </label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="sd_ratio_shs" 
+                                name="sd_ratio_shs"
+                                placeholder="N" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static">is to one department.</span>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="dept_count_shs">Current Number of Department:</label>
+                        <input type="number" id="dept_count_shs" name="dept_count_shs" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="staff_count_shs">Total Staff Available:</label>
+                        <input type="number" id="staff_count_shs" name="staff_count_shs" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                </div>
+
+
+                <div class="small__box">
+                    <h3>Professors</h3>
+                    <div class="form-group">
+                        <label for="pp_ratio_shs">Professors Per Strand Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="pp_ratio_shs" 
+                                name="pp_ratio_shs"
+                                placeholder="N"  
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static">is to one strand.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="prog_count_shs">Current Number of Programs:</label>
+                        <input type="number" id="prog_count_shs" name="prog_count_shs" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="prof_count_shs">Total Professors Available:</label>
+                        <input type="number" id="prof_count_shs" name="prof_count_shs" 
+                            min="0"
+                            step="1"
+                            onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>      
+                </div>
+
+                <div class="small__box">
+                    <h3>Regular Classrooms</h3>
+                    <div class="form-group">
+                        <label for="cs_ratio_shs">Students Per Classroom Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="cs_ratio_shs" 
+                                name="cs_ratio_shs" 
+                                placeholder="N"
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static">is to one regular classroom.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="regroom_count_shs">Current Number of Enrolled Students:</label>
+                        <input type="number" id="regroom_count_shs" name="regroom_count_shs" min="0" step="1"
+                        onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="regstud_count_shs">Total Classrooms Available:</label>
+                        <input type="number" id="regstud_count_shs" name="regstud_count_shs" min="0" step="1"
+                        onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                </div>
+
+
+                <div class="small__box">
+                    <h3>Laboratory Classrooms</h3>
+                    <div class="form-group">
+                        <label for="ls_ratio_shs">Students Per Laboratory Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="ls_ratio_shs" 
+                                name="ls_ratio_shs" 
+                                placeholder="N"
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static">is to one laboratory classroom.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="labroom_count_shs">Current Number of Enrolled Students:</label>
+                        <input type="number" id="labroom_count_shs" name="labroom_count_shs" 
+                            min="0"
+                            step="1"
+                            onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="labstud_count_shs">Total Laboratories Available:</label>
+                        <input type="number" id="labstud_count_shs" name="labstud_count_shs" 
+                            min="0"
+                            step="1"
+                            onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="section__heading">
+        <h2>COLLEGE</h2>
+    </div>
+
+
+    <div class="main__container">
+        <div class="bigbox__one">
+            <div class="boxes__grid">
+                <div class="small__box">
+                    <h3>Staff</h3>
+                    <div class="form-group">
+                        <label for="sd_ratio_col">Staff Per Department Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="sd_ratio_col" 
+                                name="sd_ratio_col" 
+                                placeholder="N"
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static">is to one department.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="dept_count_col">Current Number of Department:</label>
+                        <input type="number" id="dept_count_col" name="dept_count_col" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="staff_count_col">Total Staff Available:</label>
+                        <input type="number" id="staff_count_col" name="staff_count_col" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                </div>
+
+                <div class="small__box">
+                    <h3>Professors</h3>
+                    <div class="form-group">
+                        <label for="pp_ratio_col">Professors Per Program Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="pp_ratio_col" 
+                                name="pp_ratio_col"  
+                                placeholder="N"
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static"> is to one program.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="prog_count_col">Current Number of Programs:</label>
+                        <input type="number" id="prog_count_col" name="prog_count_col" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="prof_count_col">Total Professors Available:</label>
+                        <input type="number" id="prof_count_col" name="prof_count_col" 
+                            min="0"
+                            step="1"
+                            onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>       
+                </div>
+
+
+                <div class="small__box">
+                    <h3>Regular Classrooms</h3>
+                    <div class="form-group">
+                        <label for="cs_ratio_col">Students Per Classroom Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="cs_ratio_col" 
+                                name="cs_ratio_col"
+                                placeholder="N" 
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static"> is to one regular classroom.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="regroom_count_col">Current Number of Enrolled Students:</label>
+                        <input type="number" id="regroom_count_col" name="regroom_count_col" min="0" step="1"
+                        onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="regstud_count_col">Total Classrooms Available:</label>
+                        <input type="number" id="regstud_count_col" name="regstud_count_col" min="0" step="1"
+                        onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>  
+                </div>
+
+                <div class="small__box">
+                    <h3>Laboratory Classrooms</h3>
+                    <div class="form-group">
+                        <label for="ls_ratio_col">Students Per Laboratory Ratio:</label>
+                        <div class="ratio-input-container">
+                            <input type="number" 
+                                id="ls_ratio_col" 
+                                name="ls_ratio_col" 
+                                placeholder="N"
+                                min="0"
+                                step="1"
+                                onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                            <span class="ratio-static">is to one laboratory classroom.</span>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="labroom_count_col">Current Number of Enrolled Students:</label>
+                        <input type="number" id="labroom_count_col" name="labroom_count_col" 
+                            min="0"
+                            step="1"
+                            onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="labstud_count_col">Total Laboratories Available:</label>
+                        <input type="number" id="labstud_count_col" name="labstud_count_col" 
+                            min="0"
+                            step="1"
+                            onkeydown="return !['e', 'E', '-', '+', '.'].includes(event.key)">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="button-group">
+            <button class="update__btn" type="button" onclick="update_param()">Update</button>
+            <button class="reset__btn" type="button" onclick="reset_param()">Reset</button>
+        </div>
+        <br>
+        <br>
+        <br>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    
+    const API_BASE = "http://127.0.0.1:5000"; 
+    const ENDPOINTS = {
+        getParam: (id) => `${API_BASE}/get_param/${id}`,
+        updateParam: `${API_BASE}/update_param`,
+        resetParam: `${API_BASE}/reset_param`
+    };
+
+    function showLoader(btn, text = 'Processing...') {
+        btn.innerHTML = `<i class="uil uil-spinner spin"></i> ${text}`;
+        btn.disabled = true;
+    }
+
+    function resetLoader(btn, originalText) {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+
+    function showToast(message, type = 'success') {
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+
+    async function handleHttpError(response) {
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+            status: "error",
+            message: `HTTP Error ${response.status}: ${response.statusText}`
+        }));
+        throw new Error(errorData.message || `Error: ${response.statusText}`);
+    }
+
+    return response;
+}
+
+
+document.querySelector('.section__heading i.uil-refresh').addEventListener('click', async () => {
+    const confirmation = await Swal.fire({
+        title: 'Refresh Page?',
+        text: "Any unsaved changes will be lost!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, refresh it!'
+    });
+
+    if (confirmation.isConfirmed) {
+        Swal.fire({
+            title: 'Refreshing...',
+            text: 'Checking data before reload...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
+        try {
+            await fetchParam();
+            localStorage.setItem('pageReloaded', 'true');
+            window.location.reload();
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Refresh Failed!',
+                text: `Error: ${error.message || "Unexpected error occurred during refresh"}`,
+            });
+            console.error("Refresh error:", error);
+        }
+    }
+});
+
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+        let originalValue = input.value;  
+        input.dataset.originalValue = originalValue;
+        input.addEventListener('focus', () => {
+            input.dataset.previousValue = input.value; 
+            if (input.value === originalValue || input.value === "0") {
+                input.value = ""; 
+            }
+        });
+        input.addEventListener('blur', () => {
+            if (input.value.trim() === "") {
+                input.value = originalValue === "" ? "0" : originalValue;
+            }
+            if (input.value !== input.dataset.previousValue) {
+                input.classList.add('modified');
+            } else {
+                input.classList.remove('modified');
+            }
+        });
+    });
+
+
+async function fetchParam() {
+    try {
+        const [shsResponse, colResponse] = await Promise.all([
+            fetch(ENDPOINTS.getParam(1))
+                .then(res => res.ok 
+                    ? res.json() 
+                    : Promise.reject(`SHS fetch failed: ${res.status} ${res.statusText}`)
+                ).catch(() => ({ status: "error", message: "Failed to load SHS data" })),
+            
+            fetch(ENDPOINTS.getParam(2))
+                .then(res => res.ok 
+                    ? res.json() 
+                    : Promise.reject(`COL fetch failed: ${res.status} ${res.statusText}`)
+                ).catch(() => ({ status: "error", message: "Failed to load COL data" }))
+        ]);
+
+        let successCount = 0;
+        let errorMessages = [];
+        if (shsResponse.status === "success") {
+            populateData(shsResponse.data, 'shs');
+            successCount++;
+        } else {
+            errorMessages.push(`SHS: ${shsResponse.message || "Failed to load SHS data"}`);
+        }
+        if (colResponse.status === "success") {
+            populateData(colResponse.data, 'col');
+            successCount++;
+        } else {
+            errorMessages.push(`COL: ${colResponse.message || "Failed to load COL data"}`);
+        }
+        if (successCount === 2) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Data Loaded!',
+                text: 'All parameters have been successfully fetched.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } else if (successCount > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Partial Data Loaded',
+                text: `Some data failed to load:\n${errorMessages.join('\n')}`
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to Load Data',
+                text: `Error: ${errorMessages.join('\n')}`,
+            });
+        }
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed to Load Data',
+            text: `Error: ${error.message || "Unexpected error occurred"}`,
+        });
+
+        console.error("Data load error:", error);
+    }
+}
+function populateData(data, prefix) {
+    const fields = [
+        'sd_ratio', 'dept_count', 'staff_count', 'pp_ratio', 
+        'prog_count', 'prof_count', 'cs_ratio', 'regroom_count',
+        'regstud_count', 'ls_ratio', 'labroom_count', 'labstud_count'
+    ];
+
+    fields.forEach(field => {
+        const element = document.getElementById(`${field}_${prefix}`);
+        if (element && data[field] !== undefined) {
+            element.value = data[field];
+        }
+    });
+}
+
+async function update_param() {
+    const updateBtn = document.querySelector('.update__btn');
+    const originalText = updateBtn.innerHTML;
+    const confirmation = await Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to save these changes?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, save changes!'
+    });
+
+    if (!confirmation.isConfirmed) return;
+    try {
+        showLoader(updateBtn, 'Saving changes...');
+
+        const responses = await Promise.all([
+            submitUpdate(1, 'shs'),
+            submitUpdate(2, 'col')
+        ]);
+        let successCount = 0;
+        let errorMessages = [];
+        if (responses[0].status === "success") {
+            successCount++;
+        } else {
+            errorMessages.push(`SHS: ${responses[0].message || "Failed to update SHS data"}`);
+        }
+        if (responses[1].status === "success") {
+            successCount++;
+        } else {
+            errorMessages.push(`COL: ${responses[1].message || "Failed to update COL data"}`);
+        }
+        if (successCount === 2) {
+            handleUpdateResults(responses);
+            await fetchParam();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Saved!',
+                text: 'All updates have been saved successfully.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+        } else if (successCount > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Partial Update Successful',
+                text: `Some updates succeeded, but others failed:\n${errorMessages.join('\n')}`
+            });
+
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Update Failed!',
+                text: `Error: ${errorMessages.join('\n')}`,
+            });
+        }
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Update Failed',
+            text: `Error: ${error.message || 'Failed to complete updates. Please try again.'}`,
+        });
+
+        console.error("Update error:", error);
+    } finally {
+        resetLoader(updateBtn, originalText);
+    }
+}
+async function submitUpdate(id, prefix) {
+    const inputs = Array.from(document.querySelectorAll(`[id$="_${prefix}"]`))
+        .reduce((acc, element) => {
+            const field = element.id.replace(`_${prefix}`, '');
+            acc[field] = element.value.trim();
+            return acc;
+        }, {});
+
+    try {
+        const response = await fetch(ENDPOINTS.updateParam, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, ...inputs })
+        })
+            .then(handleHttpError)
+            .catch(err => ({
+                status: "error",
+                message: `Update failed for ${prefix.toUpperCase()}: ${err.message}`
+            }));
+        const result = await response.json().catch(() => ({
+            status: "error",
+            message: "Failed to parse server response"
+        }));
+
+        return { status: result.status, message: result.message || "Unknown error", id };
+
+    } catch (error) {
+        return { status: "error", message: error.message || "Unexpected error occurred", id };
+    }
+}
+
+function handleUpdateResults(results) {
+    const errors = results.filter(r => r.status === "error");
+
+    if (errors.length === 0) {
+        showToast('All updates saved successfully!');
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.classList.remove('modified');
+            input.classList.add('saved');
+            setTimeout(() => input.classList.remove('saved'), 1500);
+        });
+        return;
+    }
+
+    const errorDetails = errors.map(e =>
+        `ID ${e.id}: ${e.message}`
+    ).join('\n');
+
+    showToast(`Some updates failed:\n${errorDetails}`, 'warning');
+}
+
+async function reset_param() {
+    const resetBtn = document.querySelector('.reset__btn');
+    const originalText = resetBtn.innerHTML;
+    const confirmation = await Swal.fire({
+        title: 'Are you sure?',
+        text: "This will reset all parameters to 0!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, reset it!'
+    });
+
+    if (!confirmation.isConfirmed) return;
+
+    try {
+        showLoader(resetBtn, 'Resetting...');
+        const responses = await Promise.all([
+            fetch(ENDPOINTS.resetParam, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: 1 })
+            }).then(handleHttpError).then(res => res.json()),
+
+            fetch(ENDPOINTS.resetParam, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: 2 })
+            }).then(handleHttpError).then(res => res.json())
+        ]);
+        let successCount = 0;
+        let errorMessages = [];
+        if (responses[0].status === "success") {
+            successCount++;
+        } else {
+            errorMessages.push(`SHS: ${responses[0].message || "Failed to reset SHS data"}`);
+        }
+        if (responses[1].status === "success") {
+            successCount++;
+        } else {
+            errorMessages.push(`COL: ${responses[1].message || "Failed to reset COL data"}`);
+        }
+        if (successCount === 2) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Reset Successful!',
+                text: 'All parameters have been reset to 0.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            await fetchParam();
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+                input.classList.remove('modified', 'saved');
+            });
+
+        } else if (successCount > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Partial Reset Successful',
+                text: `Some resets succeeded, but others failed:\n${errorMessages.join('\n')}`
+            });
+
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Reset Failed!',
+                text: `Error: ${errorMessages.join('\n')}`,
+            });
+        }
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Reset Failed',
+            text: `Error: ${error.message || 'Failed to complete reset. Please try again.'}`,
+        });
+
+        console.error("Reset error:", error);
+    } finally {
+        resetLoader(resetBtn, originalText);
+    }
+}
+window.addEventListener('load', () => {
+    if (localStorage.getItem('pageReloaded')) {
+        showToast('Page reloaded successfully');
+        localStorage.removeItem('pageReloaded');
+    }
+    fetchParam();
+});
+
+</script>
+</body>
+</html>

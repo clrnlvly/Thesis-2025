@@ -1,0 +1,134 @@
+Finalized Conditions Summary
+Branches & Programs:
+
+Main Branch: Offers SHS (STEM, ABM, GAS, HUMSS) and College (BSCS, BSIS, BSCrim, BSTM, BTVTED).
+
+Uno Branch: Offers SHS only.
+
+Student Progression:
+
+SHS: Grade 11 (2 semesters) → Grade 12 (2 semesters).
+
+College: 1st Year → 4th Year (2 semesters per year).
+
+Transferees: 10% of students start mid-program.
+
+Attrition: 5% chance of dropout per semester.
+
+Demographics:
+
+Address: Cabuyao City, Laguna (specific barangays).
+
+Birthplace: Random Philippine cities/provinces.
+
+Gender: 48% Male, 48% Female, 4% Other.
+
+Religion: 80% Roman Catholic, 10% Iglesia ni Cristo, 5% Muslim, 5% Protestant.
+
+Guardian Data:
+
+10% missing guardian records.
+
+Occupations: Factory Worker (40%), Driver (20%), Teacher (15%), OFW (15%), Farmer (10%).
+
+Technical:
+
+PH-Specific Data: Faker('en_PH') for names, addresses, and phone numbers.
+
+Synthetic Realism: BSCS enrollment grows post-2020.
+
+
+
+
+To predict enrollment trends by combining individual-level predictions and time series analysis, follow these steps:
+
+Step 1: Build an Individual-Level Prediction Model (XGBoost)
+Goal: Predict whether a student will enroll in the next semester.
+Features:
+
+Categorical: department, program, year_level, gender, civil_status, semester (one-hot encoded).
+
+Temporal: school_year, age.
+Target: enrolled (binary: 1/0).
+
+Process:
+
+Preprocess Data:
+
+Convert categorical variables using one-hot encoding.
+
+Split data into training/validation sets with temporal stratification (e.g., train on 2019-2021, validate on 2022).
+
+Train XGBoost:
+
+Optimize hyperparameters (e.g., max_depth, learning_rate) using cross-validation.
+
+Evaluate with metrics like AUC-ROC, precision, and recall.
+
+Output: Probability scores for each student’s enrollment likelihood.
+
+Step 2: Aggregate Predictions for Trend Analysis
+Goal: Convert individual predictions into department-level trends.
+Process:
+
+For each semester, aggregate predictions by department:
+
+Calculate predicted enrollment rate:
+
+python
+Copy
+(Number of students predicted to enroll) / (Total students in department)
+Create a time series dataset:
+
+department	semester	school_year	predicted_enrollment_rate
+SHS	1ST	2022-2023	0.85
+Step 3: Forecast Trends with Time Series Models
+Goal: Predict future enrollment rates per department.
+Methods:
+
+Prophet: For departments with sufficient historical data.
+
+Linear Regression: For departments with limited data (e.g., <5 years).
+
+Process:
+
+Fit models on aggregated time series data.
+
+Forecast enrollment rates for future semesters.
+
+Output:
+
+Department-level trend forecasts (e.g., "SHS enrollment will drop by 5% in 2023-2024").
+
+Step 4: Combine Insights
+Individual Insights: Identify at-risk students (low enrollment probability) for targeted interventions.
+
+Trend Insights: Allocate resources based on department-level forecasts.
+
+Example Workflow
+python
+Copy
+# 1. Individual Prediction (XGBoost)
+import xgboost as xgb
+model = xgb.XGBClassifier()
+model.fit(X_train, y_train)
+prob_enroll = model.predict_proba(X_test)[:, 1]
+
+# 2. Aggregate Predictions
+trend_data = df_test.groupby(['department', 'semester', 'school_year'])['enrolled_pred'].mean()
+
+# 3. Time Series Forecast (Prophet)
+from prophet import Prophet
+prophet_df = trend_data.reset_index().rename(columns={'school_year': 'ds', 'predicted_enrollment_rate': 'y'})
+m = Prophet()
+m.fit(prophet_df)
+future = m.make_future_dataframe(periods=2, freq='Y')
+forecast = m.predict(future)
+Handling Challenges
+Small Data: Use linear regression with smoothed averages for departments with sparse data.
+
+Temporal Leakage: Ensure no future data leaks into training (e.g., train on past, validate on present).
+
+Feature Engineering: Add lagged enrollment rates or student retention history as features.
+
+By combining individual and trend-level approaches, you achieve both granular student insights and macro-level forecasting. Let’s build this! 🚀
